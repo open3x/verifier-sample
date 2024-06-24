@@ -1,19 +1,24 @@
 import { NextRequest } from "next/server";
 import { createPublicClient, http, isAddress } from "viem";
-import { base } from "viem/chains";
+import * as chains from 'viem/chains'
 import { createSignature } from "@/lib/signature";
 
-export async function GET(req: NextRequest) {
+function getChain(id: number) {
+  // @ts-ignore
+  return chains.find(x => x.id === id)
+}
+
+export async function GET(req: NextRequest, { params: { chainId } }: { params: { chainId: string } }) {
   try {
     const address = req.nextUrl.searchParams.get("address");
     if (!address || !isAddress(address)) {
       return new Response("Invalid address", { status: 400 });
     }
 
-    const client = createPublicClient({ chain: base, transport: http(process.env.RPC_BASE) })
+    const client = createPublicClient({ chain: getChain(Number(chainId)), transport: http() })
     const txCount = await client.getTransactionCount({ address });
     const result = txCount > 0;
-    const counter = BigInt(txCount > 0);
+    const counter = BigInt(txCount > 0 ? 1 : 0);
 
     const signature = await createSignature({ address, result, counter });
 
