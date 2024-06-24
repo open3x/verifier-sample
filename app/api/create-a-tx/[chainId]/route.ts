@@ -1,11 +1,11 @@
 import { NextRequest } from "next/server";
-import { createPublicClient, http, isAddress } from "viem";
+import { createPublicClient, extractChain, http, isAddress } from "viem";
 import * as chains from 'viem/chains'
 import { createSignature } from "@/lib/signature";
 
-function getChain(id: number) {
+function getChain(id: number | string) {
   // @ts-ignore
-  return chains.find(x => x.id === id)
+  return extractChain({ chains: Object.values(chains), id: Number(id) });
 }
 
 export async function GET(req: NextRequest, { params: { chainId } }: { params: { chainId: string } }) {
@@ -15,7 +15,11 @@ export async function GET(req: NextRequest, { params: { chainId } }: { params: {
       return new Response("Invalid address", { status: 400 });
     }
 
-    const client = createPublicClient({ chain: getChain(Number(chainId)), transport: http() })
+    const chain = getChain(chainId);
+    if (!chain) {
+      return new Response("Non supported chainId", { status: 400 });
+    }
+    const client = createPublicClient({ chain, transport: http() })
     const txCount = await client.getTransactionCount({ address });
     const result = txCount > 0;
     const counter = BigInt(txCount > 0 ? 1 : 0);
