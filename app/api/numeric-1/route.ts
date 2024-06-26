@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { isAddress } from "viem";
 import { createSignature } from "@/lib/signature";
 
-export async function GET(req: NextRequest, { params: { chainId } }: { params: { chainId: string } }) {
+export async function GET(req: NextRequest) {
   try {
     const address = req.nextUrl.searchParams.get("address");
     if (!address || !isAddress(address)) {
