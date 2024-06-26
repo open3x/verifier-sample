@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { isAddress } from "viem";
 import { createSignature } from "@/lib/signature";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, { params: { data } }: { params: { data: string } }) {
   try {
     const address = req.nextUrl.searchParams.get("address");
     if (!address || !isAddress(address)) {
@@ -10,8 +10,6 @@ export async function GET(req: NextRequest) {
     }
 
     const result = true;
-    const data = (100).toString();
-
     const signature = await createSignature({ address, result, data });
 
     return Response.json({ signature, result, data }, { status: 200 });
