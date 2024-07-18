@@ -9,10 +9,10 @@ export async function GET(req: NextRequest, { params: { data } }: { params: { da
       return new Response("Invalid address", { status: 400 });
     }
 
-    const result = true;
-    const signature = await createSignature({ address, result, data });
+    const mint_eligibility = true;
+    const signature = await createSignature({ address, mint_eligibility, data });
 
-    return Response.json({ signature, result, data }, { status: 200 });
+    return Response.json({ signature, mint_eligibility, data }, { status: 200 });
   } catch (err) {
     console.error(err);
     return new Response("Internal server error", { status: 500 });

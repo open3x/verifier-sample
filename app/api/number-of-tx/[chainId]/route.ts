@@ -16,12 +16,12 @@ export async function GET(req: NextRequest, { params: { chainId } }: { params: {
     }
     const client = createPublicClient({ chain, transport: http() })
     const txCount = await client.getTransactionCount({ address });
-    const result = txCount > 0;
+    const mint_eligibility = txCount > 0;
     const data = txCount.toString();
 
-    const signature = await createSignature({ address, result, data });
+    const signature = await createSignature({ address, mint_eligibility, data });
 
-    return Response.json({ signature, result, data }, { status: 200 });
+    return Response.json({ signature, mint_eligibility, data }, { status: 200 });
   } catch (err) {
     console.error(err);
     return new Response("Internal server error", { status: 500 });
