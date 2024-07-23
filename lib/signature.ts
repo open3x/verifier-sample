@@ -11,6 +11,6 @@ export async function createSignature({ address, mint_eligibility, data }: { add
   if (v !== BigInt(27)) {
     sBigInt = sBigInt | (BigInt(1) << BigInt(255));
   }
-  const sHex = toHex(sBigInt);
+  const sHex = toHex(sBigInt, { size: 32 });
   return `0x${r.slice(2)}${sHex.slice(2)}`;
 }
